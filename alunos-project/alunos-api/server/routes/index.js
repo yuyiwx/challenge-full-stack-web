@@ -22,7 +22,11 @@ router.get("/:id", async (req, res, next) => {
 });
 router.post("/", async (req, res, next) => {
   try {
-    let results = await db.insert(req.body.name);
+    let results = await db.insert(
+      req.body.register,
+      req.body.name,
+      req.body.cpf
+    );
     res.json(results);
   } catch (e) {
     console.log(e);

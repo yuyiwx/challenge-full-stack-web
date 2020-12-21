@@ -1,89 +1,94 @@
 <template>
   <div class="home">
-    <v-main class="ml-4">
-      <h1 class="mb-6">Consultar Alunos</h1>
-      <v-dialog v-model="dialog" persistent max-width="600px">
-        <template class="mt-6" v-slot:activator="{ on, attrs }">
-          <v-btn color="primary" dark v-bind="attrs" v-on="on">
-            Cadastrar Usuário
-          </v-btn>
-        </template>
-        <v-card>
-          <v-card-title>
-            <span class="headline">Cadastro de Usário</span>
-          </v-card-title>
-          <v-card-text>
-            <v-container>
-              <v-row>
-                <v-col cols="12" sm="6" md="4">
-                  <v-text-field
-                    label="Número de Registro*"
-                    required
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="12" sm="6" md="4">
-                  <v-text-field
-                    v-model="alunoName"
-                    label="Nome*"
-                    hint="example of helper text only on focus"
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="12" sm="6" md="4">
-                  <v-text-field
-                    label="CPF*"
-                    persistent-hint
-                    required
-                  ></v-text-field>
-                </v-col>
-              </v-row>
-            </v-container>
-            <small>*campo obrigatório</small>
-          </v-card-text>
-          <v-card-actions>
-            <v-spacer></v-spacer>
-            <v-btn color="blue darken-1" text @click="dialog = false">
-              Close
+    <v-main class="ml-4 mr-4">
+      <v-row class="ml-4 mr-4 mb-2">
+        <h1>Consultar Alunos</h1>
+        <v-spacer></v-spacer>
+        <v-dialog v-model="dialog" persistent max-width="600px">
+          <template class="mt-2" v-slot:activator="{ on, attrs }">
+            <v-btn rounded color="primary" dark v-bind="attrs" v-on="on">
+              Cadastrar Usuário
+              <v-icon class="ml-2">mdi-account-plus</v-icon>
             </v-btn>
-            <v-btn color="blue darken-1" text @click="addAluno">Save</v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-      <v-text-field
-        v-model="alunoName"
-        @keyup.enter="addAluno"
-        label="Digite seu afazer e pressione enter"
-      ></v-text-field>
+          </template>
+          <v-card>
+            <v-card-title>
+              <span class="headline">Cadastro de Usário</span>
+            </v-card-title>
+            <v-card-text>
+              <v-container>
+                <v-row>
+                  <v-col cols="12" sm="6" md="4">
+                    <v-text-field
+                      v-model="alunoRegister"
+                      label="Número de Registro*"
+                      required
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="4">
+                    <v-text-field
+                      v-model="alunoName"
+                      label="Nome*"
+                      required
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" sm="6" md="4">
+                    <v-text-field
+                      v-model="alunoCpf"
+                      label="CPF*"
+                      required
+                    ></v-text-field>
+                  </v-col>
+                </v-row>
+              </v-container>
+              <small>*campo obrigatório</small>
+            </v-card-text>
+            <v-card-actions>
+              <v-spacer></v-spacer>
+              <v-btn color="blue darken-1" text @click.stop="dialog = false">
+                Close
+              </v-btn>
+              <v-btn color="blue darken-1" text @click.stop="addAluno"
+                >Save</v-btn
+              >
+            </v-card-actions>
+          </v-card>
+        </v-dialog>
+      </v-row>
+      <v-data-table
+        :headers="headers"
+        :items="alunos"
+        :items-per-page="5"
+        class="elevation-1"
+        ><template v-slot:[`item.id`]="{ item }">
+          <v-chip color="green" dark>
+            <v-btn
+              class="pa-0"
+              target="_blank"
+              text
+              dark
+              v-bind="attrs"
+              v-on="on"
+              @click="editbuttonAluno(item.id)"
+            >
+              <v-icon small class="mr-2">mdi-pencil</v-icon>
+              Editar
+            </v-btn>
+          </v-chip>
+          <v-chip class="ml-1" color="red" dark>
+            <v-btn
+              @click.stop="removeAluno(item.id)"
+              class="pa-0"
+              target="_blank"
+              text
+            >
+              <v-icon small>mdi-delete</v-icon>
+              <span class="ml-1">remover</span>
+            </v-btn>
+          </v-chip>
+        </template></v-data-table
+      >
     </v-main>
-    <v-data-table
-      :headers="headers"
-      :items="alunos"
-      :items-per-page="5"
-      class="elevation-1"
-      ><template v-slot:[`item.id`]="{ item }">
-        <v-chip color="green" dark>
-          <v-btn
-            class="pa-0"
-            href="https://github.com/vuetifyjs/vuetify/releases/latest"
-            target="_blank"
-            text
-          >
-            <v-icon small>mdi-pencil</v-icon>
-            <span class="ml-1">editar</span>
-          </v-btn>
-        </v-chip>
-        <v-chip class="ml-1" color="red" dark>
-          <v-btn
-            @click.stop="removeAluno(item.id)"
-            class="pa-0"
-            target="_blank"
-            text
-          >
-            <v-icon small>mdi-delete</v-icon>
-            <span class="ml-1">remover</span>
-          </v-btn>
-        </v-chip>
-      </template></v-data-table
-    >
   </div>
 </template>
 
@@ -194,7 +199,10 @@ export default {
         },
       ],
       alunoName: "",
+      alunoRegister: "",
+      alunoCpf: "",
       dialog: false,
+      dialog_edit: false,
     };
   },
   async created() {
@@ -207,22 +215,31 @@ export default {
     }
   },
   methods: {
-    getColor(calories) {
-      if (calories > 40) return "red";
-      else if (calories > 30) return "orange";
-      else return "green";
-    },
     async addAluno() {
-      await axios.post(baseURL, { name: this.alunoName });
+      await axios.post(baseURL, {
+        register: this.alunoRegister,
+        name: this.alunoName,
+        cpf: this.alunoCpf,
+      });
       const res = await axios.get(baseURL);
       this.alunos = res.data;
       this.alunoName = "";
+      this.alunoRegister = "";
+      this.alunoCpf = "";
+      this.dialog = false;
+    },
+    closeDialog_edit() {
+      this.dialog_edit = false;
+      this.alunoName = "";
+      this.alunoRegister = "";
     },
     async removeAluno(aluno_id) {
       await axios.delete(baseURL, { data: { id: aluno_id } });
       const res = await axios.get(baseURL);
       this.alunos = res.data;
-      this.alunosName = "";
+      this.alunoName = "";
+      this.alunoRegister = "";
+      this.alunoCpf = "";
     },
   },
 };

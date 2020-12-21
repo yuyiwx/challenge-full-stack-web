@@ -9,12 +9,19 @@
       <v-spacer></v-spacer>
 
       <v-btn
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
+        href="https://www.grupoa.com.br/"
         target="_blank"
+        class="pa-0"
         text
       >
-        <span class="mr-2">Cadastrar Usuário</span>
-        <v-icon>mdi-account-plus</v-icon>
+        <v-img
+          alt="Vuetify Logo"
+          class="shrink ma-0"
+          contain
+          src="./assets/image.png"
+          transition="scale-transition"
+          width="90"
+        />
       </v-btn>
     </v-app-bar>
     <v-navigation-drawer v-model="drawer" absolute bottom temporary>
@@ -37,9 +44,9 @@
         </v-list-item-group>
       </v-list>
     </v-navigation-drawer>
-    <v-content>
+    <v-main>
       <router-view></router-view>
-    </v-content>
+    </v-main>
   </v-app>
 </template>
 
