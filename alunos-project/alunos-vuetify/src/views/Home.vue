@@ -4,7 +4,13 @@
       <v-row class="ml-4 mr-4 mb-2">
         <h1>Consultar Alunos</h1>
         <v-spacer></v-spacer>
-        <v-dialog v-model="dialog" persistent max-width="600px">
+        <v-dialog
+          :retain-focus="false"
+          class="will-change"
+          v-model="dialog"
+          persistent
+          max-width="600px"
+        >
           <template class="mt-2" v-slot:activator="{ on, attrs }">
             <v-btn rounded color="primary" dark v-bind="attrs" v-on="on">
               Cadastrar Usuário
@@ -68,8 +74,13 @@
         :items-per-page="10"
         class="elevation-1"
         ><template v-slot:[`item.id`]="{ item }">
-          <v-chip color="green" dark>
-            <v-dialog v-model="dialog_edit" persistent max-width="600px">
+          <v-chip color="green" dark class="will-change">
+            <v-dialog
+              :retain-focus="false"
+              v-model="dialog_edit"
+              persistent
+              max-width="600px"
+            >
               <template class="mt-2" v-slot:activator="{ on_edit, attrs_edit }">
                 <v-btn
                   class="pa-0"
@@ -141,7 +152,12 @@
             </v-dialog>
           </v-chip>
           <v-chip class="ml-1" color="red" dark>
-            <v-dialog v-model="dialog_remove" persistent max-width="290">
+            <v-dialog
+              :retain-focus="false"
+              v-model="dialog_remove"
+              persistent
+              max-width="290"
+            >
               <template v-slot:activator="{ on, attrs }">
                 <v-btn
                   class="pa-0"
@@ -201,6 +217,7 @@ export default {
   components: {
     //HelloWorld,
   },
+
   data() {
     return {
       drawer: false,
@@ -293,3 +310,9 @@ export default {
   },
 };
 </script>
+
+<style module>
+.will-change {
+  will-change: transform !important;
+}
+</style>
