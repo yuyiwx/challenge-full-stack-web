@@ -34,6 +34,22 @@ router.post("/", async (req, res, next) => {
     res.sendStatus(500);
   }
 });
+
+router.patch("/", async (req, res, next) => {
+  try {
+    let results = await db.patch(
+      req.body.name,
+      req.body.email,
+      req.body.cpf,
+      req.body.id
+    );
+    res.json(results);
+  } catch (e) {
+    console.log(e);
+    res.sendStatus(500);
+  }
+});
+
 router.delete("/", async (req, res, next) => {
   try {
     let results = await db.delete(req.body.id);

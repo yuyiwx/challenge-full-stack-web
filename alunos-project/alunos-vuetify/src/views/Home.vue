@@ -69,29 +69,120 @@
         class="elevation-1"
         ><template v-slot:[`item.id`]="{ item }">
           <v-chip color="green" dark>
-            <v-btn
-              class="pa-0"
-              target="_blank"
-              text
-              dark
-              v-bind="attrs"
-              v-on="on"
-              @click="editbuttonAluno(item.id)"
-            >
-              <v-icon small class="mr-2">mdi-pencil</v-icon>
-              Editar
-            </v-btn>
+            <v-dialog v-model="dialog_edit" persistent max-width="600px">
+              <template class="mt-2" v-slot:activator="{ on_edit, attrs_edit }">
+                <v-btn
+                  class="pa-0"
+                  target="_blank"
+                  text
+                  rounded
+                  dark
+                  v-bind="attrs_edit"
+                  v-on="on_edit"
+                  @click="editbuttonAluno(item.id)"
+                >
+                  <v-icon small class="mr-2">mdi-pencil</v-icon>
+                  Editar
+                </v-btn>
+              </template>
+              <v-card>
+                <v-card-title>
+                  <span class="headline">Cadastro de Usário</span>
+                </v-card-title>
+                <v-card-text>
+                  <v-container>
+                    <v-row>
+                      <v-col cols="12" sm="6" md="4">
+                        <v-text-field
+                          v-model="alunoRegister"
+                          label="Número de Registro*"
+                          required
+                          disabled
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="4">
+                        <v-text-field
+                          v-model="alunoName"
+                          label="Nome*"
+                          required
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="4">
+                        <v-text-field
+                          v-model="alunoEmail"
+                          label="E-mail*"
+                          required
+                        ></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="4">
+                        <v-text-field
+                          v-model="alunoCpf"
+                          label="CPF*"
+                          required
+                        ></v-text-field>
+                      </v-col>
+                    </v-row>
+                  </v-container>
+                  <small>*campo obrigatório</small>
+                </v-card-text>
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="blue darken-1" text @click.stop="closeDialog">
+                    Close
+                  </v-btn>
+                  <v-btn
+                    color="blue darken-1"
+                    text
+                    @click.stop="patchAluno(item.id)"
+                    >Save</v-btn
+                  >
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
           </v-chip>
           <v-chip class="ml-1" color="red" dark>
-            <v-btn
-              @click.stop="removeAluno(item.id)"
-              class="pa-0"
-              target="_blank"
-              text
-            >
-              <v-icon small>mdi-delete</v-icon>
-              <span class="ml-1">remover</span>
-            </v-btn>
+            <v-dialog v-model="dialog_remove" persistent max-width="290">
+              <template v-slot:activator="{ on, attrs }">
+                <v-btn
+                  class="pa-0"
+                  target="_blank"
+                  text
+                  dark
+                  v-bind="attrs"
+                  v-on="on"
+                >
+                  <v-icon small>mdi-delete</v-icon>
+                  <span class="ml-1">remover</span>
+                </v-btn>
+              </template>
+              <v-card>
+                <v-card-title class="headline">
+                  Deseja mesmo apagar esse aluno?
+                </v-card-title>
+                <v-card-text
+                  >Essa ação não poderá ser revertida. Deseja mesmo
+                  continuar?</v-card-text
+                >
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn
+                    color="green darken-1"
+                    text
+                    @click="dialog_remove = false"
+                  >
+                    Cancelar
+                  </v-btn>
+                  <v-btn
+                    color="green darken-1"
+                    text
+                    @click="dialog_remove = false"
+                    @click.stop="removeAluno(item.id)"
+                  >
+                    Sim
+                  </v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
           </v-chip>
         </template></v-data-table
       >
@@ -131,6 +222,7 @@ export default {
       alunoEmail: "",
       dialog: false,
       dialog_edit: false,
+      dialog_remove: false,
     };
   },
   async created() {
@@ -155,14 +247,23 @@ export default {
       this.alunoName = "";
       this.alunoRegister = "";
       this.alunoCpf = "";
+      this.alunoEmail = "";
       this.dialog = false;
     },
-    closeDialog() {
-      this.dialog = false;
+    async patchAluno(aluno_id) {
+      await axios.patch(baseURL, {
+        name: this.alunoName,
+        email: this.alunoEmail,
+        cpf: this.alunoCpf,
+        id: aluno_id,
+      });
+      const res = await axios.get(baseURL);
+      this.alunos = res.data;
       this.alunoName = "";
       this.alunoRegister = "";
-      this.alunoEmail = "";
       this.alunoCpf = "";
+      this.alunoEmail = "";
+      this.dialog_edit = false;
     },
     async removeAluno(aluno_id) {
       await axios.delete(baseURL, { data: { id: aluno_id } });
@@ -170,6 +271,23 @@ export default {
       this.alunos = res.data;
       this.alunoName = "";
       this.alunoRegister = "";
+      this.alunoCpf = "";
+    },
+    async editbuttonAluno(aluno_id) {
+      this.dialog_edit = true;
+      const res = await axios.get(baseURL + "/" + aluno_id);
+      console.log(baseURL + "/" + aluno_id);
+      this.alunoName = res.data.name;
+      this.alunoRegister = res.data.register;
+      this.alunoEmail = res.data.email;
+      this.alunoCpf = res.data.cpf;
+    },
+    closeDialog() {
+      this.dialog = false;
+      this.dialog_edit = false;
+      this.alunoName = "";
+      this.alunoRegister = "";
+      this.alunoEmail = "";
       this.alunoCpf = "";
     },
   },

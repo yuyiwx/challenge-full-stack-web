@@ -46,6 +46,20 @@ chirprdb.insert = (register, name, email, cpf) => {
     );
   });
 };
+chirprdb.patch = (name, email, cpf, id) => {
+  return new Promise((resolve, reject) => {
+    pool.query(
+      `UPDATE alunos SET name = ?, email=?, cpf=? WHERE id = ?`,
+      [name, email, cpf, id],
+      (err, results) => {
+        if (err) {
+          return reject(err);
+        }
+        resolve(results);
+      }
+    );
+  });
+};
 chirprdb.delete = (id) => {
   return new Promise((resolve, reject) => {
     pool.query(`DELETE FROM alunos WHERE id = ?`, [id], (err, results) => {
