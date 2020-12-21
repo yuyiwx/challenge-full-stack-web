@@ -32,11 +32,11 @@ chirprdb.one = (id) => {
   });
 };
 
-chirprdb.insert = (register, name, cpf) => {
+chirprdb.insert = (register, name, email, cpf) => {
   return new Promise((resolve, reject) => {
     pool.query(
-      `INSERT INTO alunos (register,name,cpf) VALUES (?,?,?)`,
-      [register, name, cpf],
+      `INSERT INTO alunos (register, name, email, cpf) VALUES (?,?,?,?)`,
+      [register, name, email, cpf],
       (err, results) => {
         if (err) {
           return reject(err);

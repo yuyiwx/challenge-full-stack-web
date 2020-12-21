@@ -25,6 +25,7 @@ router.post("/", async (req, res, next) => {
     let results = await db.insert(
       req.body.register,
       req.body.name,
+      req.body.email,
       req.body.cpf
     );
     res.json(results);
