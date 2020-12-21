@@ -46,11 +46,11 @@ chirprdb.insert = (register, name, email, cpf) => {
     );
   });
 };
-chirprdb.patch = (name, email, cpf, id) => {
+chirprdb.patch = (name, email, cpf, register) => {
   return new Promise((resolve, reject) => {
     pool.query(
-      `UPDATE alunos SET name = ?, email=?, cpf=? WHERE id = ?`,
-      [name, email, cpf, id],
+      `UPDATE alunos SET name = ?, email=?, cpf=? WHERE register = ?`,
+      [name, email, cpf, register],
       (err, results) => {
         if (err) {
           return reject(err);

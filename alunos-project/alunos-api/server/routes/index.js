@@ -41,7 +41,7 @@ router.patch("/", async (req, res, next) => {
       req.body.name,
       req.body.email,
       req.body.cpf,
-      req.body.id
+      req.body.register
     );
     res.json(results);
   } catch (e) {

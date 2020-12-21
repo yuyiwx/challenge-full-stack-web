@@ -141,10 +141,7 @@
                   <v-btn color="blue darken-1" text @click.stop="closeDialog">
                     Close
                   </v-btn>
-                  <v-btn
-                    color="blue darken-1"
-                    text
-                    @click.stop="patchAluno(item.id)"
+                  <v-btn color="blue darken-1" text @click.stop="patchAluno()"
                     >Save</v-btn
                   >
                 </v-card-actions>
@@ -166,9 +163,10 @@
                   dark
                   v-bind="attrs"
                   v-on="on"
+                  @click="removeButton(item.id)"
                 >
                   <v-icon small>mdi-delete</v-icon>
-                  <span class="ml-1">remover</span>
+                  <span class="ml-1"> Remover </span>
                 </v-btn>
               </template>
               <v-card>
@@ -192,7 +190,7 @@
                     color="green darken-1"
                     text
                     @click="dialog_remove = false"
-                    @click.stop="removeAluno(item.id)"
+                    @click.stop="removeAluno(itemSid)"
                   >
                     Sim
                   </v-btn>
@@ -230,23 +228,24 @@ export default {
         { text: "Nome", value: "name" },
         { text: "CPF", value: "cpf" },
         { text: "E-mail", value: "email" },
-        { text: "Ações", value: "id", sortable: false },
+        { text: "Ações", value: "id" },
       ],
       alunos: [],
       alunoName: "",
       alunoRegister: "",
       alunoCpf: "",
       alunoEmail: "",
+      alunoId: "",
       dialog: false,
       dialog_edit: false,
       dialog_remove: false,
+      itemSid: "",
     };
   },
   async created() {
     try {
       const res = await axios.get(baseURL);
       this.alunos = res.data;
-      console.log(res.data[0]);
     } catch (e) {
       console.error(e);
     }
@@ -267,12 +266,12 @@ export default {
       this.alunoEmail = "";
       this.dialog = false;
     },
-    async patchAluno(aluno_id) {
+    async patchAluno() {
       await axios.patch(baseURL, {
         name: this.alunoName,
         email: this.alunoEmail,
         cpf: this.alunoCpf,
-        id: aluno_id,
+        register: this.alunoRegister,
       });
       const res = await axios.get(baseURL);
       this.alunos = res.data;
@@ -298,6 +297,10 @@ export default {
       this.alunoRegister = res.data.register;
       this.alunoEmail = res.data.email;
       this.alunoCpf = res.data.cpf;
+    },
+    removeButton(id) {
+      this.dialog_remove = true;
+      this.itemSid = id;
     },
     closeDialog() {
       this.dialog = false;
